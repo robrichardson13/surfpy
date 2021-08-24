@@ -15,9 +15,10 @@ class WaveModel(NOAAModel):
     _base_gfs_wave_grib_url = 'https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.{0}/{3}/wave/gridded/{1}.t{3}z.{2}.f{4}.grib2'
 
     def create_grib_url(self, time_index):
+        current_time = datetime.utcnow()
         model_run_time = self.latest_model_time()
         model_run_str = str(model_run_time.hour).rjust(2, '0')
-        hour_str = str(int(time_index)).rjust(3, '0')
+        hour_str = str(int(time_index + current_time.hour)).rjust(3, '0')
         date_str = model_run_time.strftime('%Y%m%d')
         url = self._base_gfs_wave_grib_url.format(
             date_str, self.name, self.subset, model_run_str, hour_str)
@@ -89,7 +90,7 @@ class WaveModel(NOAAModel):
         return True
 
 
-def atlantic_gfs_wave_model():
+def atlantic_gfs_wave_model(interval):
     return WaveModel(
         name='gfswave',
         subset='atlocn.0p16',
@@ -97,13 +98,13 @@ def atlantic_gfs_wave_model():
         bottom_left=Location(0.00, 260.00),
         top_right=Location(55.00011, 310.00011),
         location_resolution=0.167,
-        time_resolution=0.125,
+        time_resolution=interval,
         max_index=384,
         hourly_cutoff_index=0
     )
 
 
-def us_west_coast_gfs_wave_model():
+def us_west_coast_gfs_wave_model(interval):
     return WaveModel(
         name='gfswave',
         subset='wcoast.0p16',
@@ -111,7 +112,7 @@ def us_west_coast_gfs_wave_model():
         bottom_left=Location(25.00, 210.00),
         top_right=Location(50.00005, 250.00008),
         location_resolution=0.167,
-        time_resolution=0.125,
+        time_resolution=interval,
         max_index=384,
         hourly_cutoff_index=0
     )

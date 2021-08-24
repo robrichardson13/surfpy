@@ -85,9 +85,7 @@ class NOAAModel(object):
     def create_grib_urls(self, start_time_index, end_time_index):
         urls = []
         for i in range(start_time_index, end_time_index):
-            if i > self.hourly_cutoff_index and (i - self.hourly_cutoff_index) % self.time_resolution_hours != 0:
-                continue
-            urls.append(self.create_grib_url(i))
+            urls.append(self.create_grib_url(i * self.time_resolution))
         return urls
 
     def fetch_grib_data(self, time_index):
